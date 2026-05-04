@@ -1,0 +1,27 @@
+# Detection & Tracking Module (Person A)
+# Python 3.10+
+
+# Core dependencies
+opencv-python==4.8.1.78
+torch==2.1.1  # See PyTorch install instructions in README.md for ROCm/CPU setup
+ultralytics==8.0.220
+numpy==1.24.3
+
+# Utilities
+colorama==0.4.6  # For cross-platform colored terminal output (optional)
+
+# ============================================================================
+# PyTorch Installation Notes:
+# ============================================================================
+# DEFAULT (CPU):
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+#
+# AMD GPU (ROCm):
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
+#   (or rocm5.6 depending on your ROCm version)
+#
+# NVIDIA GPU (CUDA):
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+#
+# See README.md for detailed setup instructions including ROCm verification.
+# ============================================================================
