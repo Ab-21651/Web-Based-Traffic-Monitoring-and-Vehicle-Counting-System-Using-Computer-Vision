@@ -57,7 +57,7 @@ def main():
             config.OUTPUT_JSON
         )
 
-        logger.log_info("✓ Pipeline completed successfully")
+        logger.log_info("[DONE] Pipeline completed successfully")
         return 0
 
     except KeyboardInterrupt:
@@ -66,7 +66,7 @@ def main():
     except Exception as e:
         error_msg = f"Fatal error in pipeline: {e}\n{traceback.format_exc()}"
         logger.log_error(error_msg)
-        print(f"\n✗ Pipeline failed. Check {config.DEBUG_LOG} for details.")
+        print(f"\n[FAIL] Pipeline failed. Check {config.DEBUG_LOG} for details.")
         return 1
 
 
