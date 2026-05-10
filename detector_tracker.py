@@ -15,7 +15,6 @@ from ultralytics import YOLO
 
 import config
 from debug_logger import logger
-from analytics import TrafficAnalytics
 
 
 class DetectionTracker:
@@ -27,7 +26,6 @@ class DetectionTracker:
         self.total_frames_processed = 0
         self.unique_vehicle_ids = set()
         self.inference_times = []
-        self.analytics = None  # Will be initialized once FPS is known
 
     def _get_device(self):
         """Detect available device: CUDA, ROCm, or CPU."""
@@ -68,13 +66,9 @@ class DetectionTracker:
             return
 
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        fps = cap.get(cv2.CAP_PROP_FPS) or 30
-        self.analytics = TrafficAnalytics(fps=fps)
-        
         frame_num = 0
         frame_count_for_summary = 0
         inference_times_summary = []
-        metrics = {"total_count": 0, "flow_rate": 0, "vehicles_in_frame": 0}
 
         try:
             while True:
@@ -132,11 +126,7 @@ class DetectionTracker:
                     inference_times_summary = []
                     frame_count_for_summary = 0
 
-                # Update analytics
-                metrics = self.analytics.update(frame_num, detections)
-                frame_with_boxes = self.analytics.draw_analytics(frame_with_boxes)
-
-                yield frame_num, detections, frame_with_boxes, metrics
+                yield frame_num, detections, frame_with_boxes
 
         except Exception as e:
             logger.log_error(f"Error in stream_frames at frame {frame_num}: {e}")
@@ -166,14 +156,10 @@ class DetectionTracker:
         # Collect all frame data for JSON
         all_frames_data = []
 
-        fps = cap.get(cv2.CAP_PROP_FPS) or 30
-        self.analytics = TrafficAnalytics(fps=fps)
-
         try:
             frame_num = 0
             frame_count_for_summary = 0
             inference_times_summary = []
-            metrics = {"total_count": 0, "flow_rate": 0, "vehicles_in_frame": 0}
 
             while True:
                 ret, frame = cap.read()
@@ -229,15 +215,10 @@ class DetectionTracker:
                 except Exception as e:
                     logger.log_error(f"Failed to write frame {frame_num} to output video: {e}")
 
-                # Update analytics
-                metrics = self.analytics.update(frame_num, detections)
-                frame_with_boxes = self.analytics.draw_analytics(frame_with_boxes)
-
                 # Store frame data for JSON
                 all_frames_data.append({
                     "frame": frame_num,
                     "detections": detections,
-                    "metrics": metrics,
                     "inference_ms": inference_ms
                 })
 
